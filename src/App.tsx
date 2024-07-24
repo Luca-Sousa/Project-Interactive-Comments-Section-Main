@@ -41,6 +41,13 @@ interface Data {
 export function App() {
   const currentUser = datas.currentUser;
   const [comments, setComments] = useState<Comment[]>([]);
+  const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
+  const [editedContent, setEditedContent] = useState<string>("");
+  const [replyingCommentId, setReplyingCommentId] = useState<number | null>(
+    null
+  );
+  const [replyingReplyId, setReplyingReplyId] = useState<number | null>(null);
+  const [replyContent, setReplyContent] = useState<string>("");
 
   useEffect(() => {
     const storedComments = localStorage.getItem("comments");
@@ -51,44 +58,43 @@ export function App() {
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("comments", JSON.stringify(comments));
-  }, [comments]);
-
-  const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
-  const [editedContent, setEditedContent] = useState<string>("");
-  const [replyingCommentId, setReplyingCommentId] = useState<number | null>(
-    null
-  );
-  const [replyingReplyId, setReplyingReplyId] = useState<number | null>(null);
-
   const handleEdit = (replyId: number, currentContent: string) => {
     setEditingReplyId(replyId);
     setEditedContent(currentContent);
   };
 
-  const handleReplyToComment = (commentId: number) => {
+  const handleReplyToComment = (commentId: number, username: string) => {
     setReplyingCommentId(commentId);
     setReplyingReplyId(null);
+    setReplyContent(`@${username}, `);
   };
 
-  const handleReplyToReply = (replyId: number) => {
+  const handleReplyToReply = (replyId: number, username: string) => {
     setReplyingReplyId(replyId);
     setReplyingCommentId(null);
+    setReplyContent(`@${username}, `);
+  };
+
+  const handleCancelReply = () => {
+    setReplyingCommentId(null);
+    setReplyingReplyId(null);
+    setReplyContent("");
   };
 
   const handleUpdate = (replyId: number) => {
     const updatedComments = comments.map((comment) => ({
       ...comment,
-      replies: comment.replies.map((reply) => {
-        if (reply.id === replyId) {
-          return { ...reply, content: editedContent };
-        }
-        return reply;
-      }),
+      replies: comment.replies.map((reply) =>
+        reply.id === replyId ? { ...reply, content: editedContent } : reply
+      ),
     }));
+
     setComments(updatedComments);
+
+    localStorage.setItem("comments", JSON.stringify(updatedComments));
+
     setEditingReplyId(null);
+    setEditedContent("");
   };
 
   const handleDelete = (replyId: number) => {
@@ -135,7 +141,9 @@ export function App() {
 
                 <button
                   className="flex items-center gap-2 text-colorModerateBlue font-bold"
-                  onClick={() => handleReplyToComment(comment.id)}
+                  onClick={() =>
+                    handleReplyToComment(comment.id, comment.user.username)
+                  }
                 >
                   <img className="size-4" src={IconReply} alt="Icon Reply" />
                   Reply
@@ -155,13 +163,20 @@ export function App() {
               />
               <textarea
                 className="w-full h-24 p-4 focus:outline outline-colorDarkBlue resize-none rounded-lg border border-colorLightGray"
-                name=""
-                id=""
-                value={`@${comment.user.username},`}
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
               ></textarea>
-              <button className="w-28 py-3 text-colorWhite bg-colorModerateBlue rounded-xl hover:bg-colorLightGrayishBlue">
-                REPLY
-              </button>
+              <div className="space-y-4 flex flex-col">
+                <button className="w-28 py-3 text-colorWhite bg-colorModerateBlue rounded-xl hover:bg-colorLightGrayishBlue">
+                  REPLY
+                </button>
+                <button
+                  className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+                  onClick={handleCancelReply}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
 
@@ -220,6 +235,7 @@ export function App() {
                                 <img src={IconDelete} alt="Delete Reply" />
                                 Delete
                               </button>
+
                               <button
                                 onClick={() =>
                                   handleEdit(reply.id, reply.content)
@@ -233,7 +249,12 @@ export function App() {
                           ) : (
                             <button
                               className="flex items-center gap-2 text-colorModerateBlue font-bold"
-                              onClick={() => handleReplyToReply(reply.id)}
+                              onClick={() =>
+                                handleReplyToReply(
+                                  reply.id,
+                                  reply.user.username
+                                )
+                              }
                             >
                               <img
                                 className="size-4"
@@ -256,12 +277,23 @@ export function App() {
                                 }
                               ></textarea>
                               <div className="flex justify-end">
-                                <button
-                                  className="w-28 py-2 px-4 bg-colorModerateBlue text-colorWhite rounded-lg hover:bg-colorLightGrayishBlue"
-                                  onClick={() => handleUpdate(reply.id)}
-                                >
-                                  UPDATE
-                                </button>
+                                <div className="space-x-4">
+                                  <button
+                                    className="w-28 py-2 px-4 bg-colorModerateBlue text-colorWhite rounded-lg hover:bg-colorLightGrayishBlue"
+                                    onClick={() => handleUpdate(reply.id)}
+                                  >
+                                    UPDATE
+                                  </button>
+                                  <button
+                                    className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+                                    onClick={() => {
+                                      setEditingReplyId(null);
+                                      setEditedContent("");
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           ) : (
@@ -288,11 +320,20 @@ export function App() {
                             className="w-full h-24 p-4 focus:outline outline-colorDarkBlue resize-none rounded-lg border border-colorLightGray"
                             name=""
                             id=""
-                            value={`@${reply.user.username},`}
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
                           ></textarea>
-                          <button className="w-24 py-3 text-colorWhite bg-colorModerateBlue rounded-xl hover:bg-colorLightGrayishBlue">
-                            REPLY
-                          </button>
+                          <div className="space-y-4 flex flex-col">
+                            <button className="w-28 py-3 text-colorWhite bg-colorModerateBlue rounded-xl hover:bg-colorLightGrayishBlue">
+                              REPLY
+                            </button>
+                            <button
+                              className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+                              onClick={handleCancelReply}
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         </div>
                       )}
                   </div>
