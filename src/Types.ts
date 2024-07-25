@@ -1,22 +1,22 @@
 export interface User {
+  username: string;
   image: {
     png: string;
     webp: string;
   };
-  username: string;
 }
 
 export interface Reply {
-  id: number;
+  id: string; // Mantém id como string
   content: string;
   createdAt: string;
   score: number;
-  replyingTo: string;
   user: User;
+  replyingTo: string;
 }
 
 export interface Comment {
-  id: number;
+  id: string; // Altera id para string
   content: string;
   createdAt: string;
   score: number;
