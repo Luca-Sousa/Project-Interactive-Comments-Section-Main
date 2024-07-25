@@ -1,8 +1,5 @@
 import IconPlus from "./assets/images/icon-plus.svg";
 import IconMinus from "./assets/images/icon-minus.svg";
-import IconReply from "./assets/images/icon-reply.svg";
-import IconDelete from "./assets/images/icon-delete.svg";
-import IconEdit from "./assets/images/icon-edit.svg";
 import { Comment, Reply } from "./Types";
 import { datas } from "./Datas";
 import { useEffect, useState } from "react";
@@ -121,14 +118,14 @@ export function App() {
                               src={reply.user.image.png}
                               alt={`Image User: ${reply.user.username}`}
                             />
-                            <h2 className="flex gap-2 items-center text-colorDarkBlue font-medium">
-                              {reply.user.username}
+                            <div className="flex gap-2 items-center text-colorDarkBlue font-medium">
+                              <h2>{reply.user.username}</h2>
                               {reply.user.username === currentUser.username && (
                                 <p className="text-sm text-colorWhite bg-colorModerateBlue px-1">
                                   you
                                 </p>
                               )}
-                            </h2>
+                            </div>
 
                             <p className="text-colorGrayishBlue">
                               {reply.createdAt}
@@ -136,28 +133,49 @@ export function App() {
                           </div>
 
                           {reply.user.username === currentUser.username ? (
-                            <div className="flex gap-6 items-center">
-                              <button
-                                className="flex items-center gap-2 text-colorSoftRed font-bold"
+                            <div className="flex items-center gap-6">
+                              <Button
+                                variant="tertiary"
+                                size="auto"
                                 onClick={() => handleDelete(reply.id)}
                               >
-                                <img src={IconDelete} alt="Delete Reply" />
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 12 14"
+                                  className="size-3"
+                                >
+                                  <path
+                                    d="M1.167 12.448c0 .854.7 1.552 1.555 1.552h6.222c.856 0 1.556-.698 1.556-1.552V3.5H1.167v8.948Zm10.5-11.281H8.75L7.773 0h-3.88l-.976 1.167H0v1.166h11.667V1.167Z"
+                                    fill="currentColor"
+                                  />
+                                </svg>
                                 Delete
-                              </button>
+                              </Button>
 
-                              <button
+                              <Button
+                                variant="secondary"
+                                size="auto"
                                 onClick={() =>
                                   handleEdit(reply.id, reply.content)
                                 }
-                                className="flex items-center gap-2 text-colorModerateBlue font-bold"
                               >
-                                <img src={IconEdit} alt="Edit Reply" />
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 14 14"
+                                  className="size-3"
+                                >
+                                  <path
+                                    d="M13.479 2.872 11.08.474a1.75 1.75 0 0 0-2.327-.06L.879 8.287a1.75 1.75 0 0 0-.5 1.06l-.375 3.648a.875.875 0 0 0 .875.954h.078l3.65-.333c.399-.04.773-.216 1.058-.499l7.875-7.875a1.68 1.68 0 0 0-.061-2.371Zm-2.975 2.923L8.159 3.449 9.865 1.7l2.389 2.39-1.75 1.706Z"
+                                    fill="currentColor"
+                                  />
+                                </svg>
                                 Edit
-                              </button>
+                              </Button>
                             </div>
                           ) : (
-                            <button
-                              className="flex items-center gap-2 text-colorModerateBlue font-bold"
+                            <Button
+                              variant="secondary"
+                              size="auto"
                               onClick={() =>
                                 handleReplyToReply(
                                   reply.id,
@@ -165,13 +183,18 @@ export function App() {
                                 )
                               }
                             >
-                              <img
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 14 13"
                                 className="size-4"
-                                src={IconReply}
-                                alt="Icon Reply"
-                              />
+                              >
+                                <path
+                                  d="M.227 4.316 5.04.16a.657.657 0 0 1 1.085.497v2.189c4.392.05 7.875.93 7.875 5.093 0 1.68-1.082 3.344-2.279 4.214-.373.272-.905-.07-.767-.51 1.24-3.964-.588-5.017-4.829-5.078v2.404c0 .566-.664.86-1.085.496L.227 5.31a.657.657 0 0 1 0-.993Z"
+                                  fill="currentColor"
+                                />
+                              </svg>
                               Reply
-                            </button>
+                            </Button>
                           )}
                         </div>
 
@@ -193,15 +216,16 @@ export function App() {
                                     UPDATE
                                   </Button>
 
-                                  <button
-                                    className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+                                  <Button
+                                    variant="tertiary"
+                                    size="cancel"
                                     onClick={() => {
                                       setEditingReplyId(null);
                                       setEditedContent("");
                                     }}
                                   >
                                     Cancel
-                                  </button>
+                                  </Button>
                                 </div>
                               </div>
                             </div>
@@ -234,12 +258,13 @@ export function App() {
                           <div className="space-y-4 flex flex-col">
                             <Button>REPLY</Button>
 
-                            <button
-                              className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+                            <Button
+                              variant="tertiary"
+                              size="cancel"
                               onClick={handleCancelReply}
                             >
                               Cancel
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       )}

@@ -1,15 +1,39 @@
 import { ComponentProps, ReactNode } from "react";
+import { tv, VariantProps } from "tailwind-variants";
 
-interface ButtonProps extends ComponentProps<"button"> {
+const buttonVariants = tv({
+  variants: {
+    variant: {
+      primary:
+        "uppercase font-semibold text-colorWhite bg-colorModerateBlue hover:bg-colorLightGrayishBlue",
+      secondary:
+        "font-bold text-colorModerateBlue hover:text-colorModerateBlue/60 hover:scale-105",
+      tertiary:
+        "font-bold text-colorSoftRed hover:text-colorSoftRed/60 hover:scale-105",
+    },
+
+    size: {
+      default: "w-24 py-3 rounded-xl",
+      auto: "w-auto flex items-center gap-2",
+      cancel: "w-auto",
+    },
+  },
+
+  defaultVariants: {
+    variant: "primary",
+    size: "default",
+  },
+});
+
+interface ButtonProps
+  extends ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
   children: ReactNode;
 }
 
-export function Button({ children, ...rest }: ButtonProps) {
+export function Button({ children, variant, size, ...props }: ButtonProps) {
   return (
-    <button
-      {...rest}
-      className="w-28 py-3 text-colorWhite bg-colorModerateBlue rounded-xl hover:bg-colorLightGrayishBlue"
-    >
+    <button {...props} className={buttonVariants({ variant, size })}>
       {children}
     </button>
   );

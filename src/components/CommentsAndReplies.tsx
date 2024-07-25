@@ -1,6 +1,5 @@
 import IconPlus from "/src/assets/images/icon-plus.svg";
 import IconMinus from "/src/assets/images/icon-minus.svg";
-import IconReply from "/src/assets/images/icon-reply.svg";
 import { Comment, User } from "../Types";
 import { Textarea } from "./Textearea";
 import { Button } from "./Button";
@@ -53,15 +52,25 @@ export function CommentsAndReplies({
               <p className="text-colorGrayishBlue">{comment.createdAt}</p>
             </div>
 
-            <button
-              className="flex items-center gap-2 text-colorModerateBlue font-bold"
+            <Button
+              variant="secondary"
+              size="auto"
               onClick={() =>
                 handleReplyToComment(comment.id, comment.user.username)
               }
             >
-              <img className="size-4" src={IconReply} alt="Icon Reply" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 14 13"
+                className="size-4"
+              >
+                <path
+                  d="M.227 4.316 5.04.16a.657.657 0 0 1 1.085.497v2.189c4.392.05 7.875.93 7.875 5.093 0 1.68-1.082 3.344-2.279 4.214-.373.272-.905-.07-.767-.51 1.24-3.964-.588-5.017-4.829-5.078v2.404c0 .566-.664.86-1.085.496L.227 5.31a.657.657 0 0 1 0-.993Z"
+                  fill="currentColor"
+                />
+              </svg>
               Reply
-            </button>
+            </Button>
           </div>
 
           <p className="text-colorGrayishBlue">{comment.content}</p>
@@ -84,12 +93,13 @@ export function CommentsAndReplies({
           <div className="space-y-4 flex flex-col">
             <Button>REPLY</Button>
 
-            <button
-              className="mx-auto px-2 text-colorSoftRed rounded-xl hover:scale-105"
+            <Button
+              variant="tertiary"
+              size="cancel"
               onClick={handleCancelReply}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       )}
